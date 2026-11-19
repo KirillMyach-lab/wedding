@@ -268,6 +268,11 @@ p { margin: 0; }
 .note { display: grid; gap: 10px; justify-items: center; padding: 26px 0; border-top: 1px solid var(--gold-soft); }
 .note:first-child { border-top: 0; padding-top: 6px; }
 .note p { max-width: 28em; }
+.chat-help { display: grid; gap: 8px; max-width: 26em; width: 100%; }
+.chat-help p { font-size: 15px; line-height: 1.4; color: var(--ink-soft); font-style: italic; }
+.chat-copy { display: flex; gap: 6px; }
+.chat-copy input { flex: 1; min-width: 0; font: inherit; font-size: 14px; padding: 8px 10px; border: 1px solid var(--gold-soft); background: #fffdf9; color: var(--ink); }
+.chat-copy button { flex: none; font-family: var(--f-caps); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; padding: 8px 12px; border: 1px solid var(--gold); background: var(--wine); color: var(--milk); cursor: pointer; }
 
 /* ===== Анкета ===== */
 .rsvp h2 { color: var(--milk); }
@@ -592,7 +597,14 @@ footer { background: var(--wine-deep); color: rgba(247,241,232,.5); text-align: 
       <div class="note reveal">
         <p class="eyebrow">Чат гостей</p>
         <p>Присоединяйтесь к общему чату гостей — там будут новости, координация и ответы на вопросы.</p>
-        <a class="btn" id="chatBtn" href="#" aria-disabled="true">Ссылка появится позже</a>
+        <a class="btn" id="chatBtn" href="https://vk.me/join/b8sDWvil4CtESZ/9bMFdykQG4vhg3HRjRXk=">Перейти в чат ВКонтакте</a>
+        <div class="chat-help">
+          <p>Не открывается? Скопируйте ссылку и вставьте её в адресную строку браузера или в поиск в приложении ВКонтакте. Для входа в чат нужен аккаунт ВК.</p>
+          <div class="chat-copy">
+            <input type="text" id="chatLink" readonly value="https://vk.me/join/b8sDWvil4CtESZ/9bMFdykQG4vhg3HRjRXk=" aria-label="Ссылка на чат гостей">
+            <button type="button" id="copyChat">Скопировать</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -785,7 +797,14 @@ tick(); setInterval(tick, 1000);
 
 // Чат
 const chatBtn = document.getElementById('chatBtn');
-if (CHAT_URL) { chatBtn.href = CHAT_URL; chatBtn.target = '_blank'; chatBtn.rel = 'noopener'; chatBtn.textContent = 'Перейти в чат ВКонтакте'; chatBtn.removeAttribute('aria-disabled'); }
+if (CHAT_URL) { chatBtn.href = CHAT_URL; document.getElementById('chatLink').value = CHAT_URL; }
+document.getElementById('copyChat').addEventListener('click', async (e) => {
+  const input = document.getElementById('chatLink');
+  try { await navigator.clipboard.writeText(input.value); }
+  catch (_) { input.focus(); input.select(); document.execCommand && document.execCommand('copy'); }
+  e.target.textContent = 'Скопировано';
+  setTimeout(() => e.target.textContent = 'Скопировать', 2000);
+});
 
 // Музыка
 let audio = null;
